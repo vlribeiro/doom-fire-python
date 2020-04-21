@@ -53,7 +53,7 @@ class Fire:
         self.virtual_width = self.width // self.pixel_size
         self.virtual_height = self.height // self.pixel_size
         self.pixel_array = [0] * \
-            (self.virtual_width - 1) * self.virtual_height + \
+            self.virtual_width * (self.virtual_height - 1) + \
             [len(self.colors) - 1] * self.virtual_width
         super().__init__()
 
@@ -71,10 +71,11 @@ class Fire:
                 i % self.virtual_width * self.pixel_size,
                 i // self.virtual_width * self.pixel_size,
                 self.pixel_size, self.pixel_size))
-            pygame.draw.rect(surface, (16, 16, 16), Rect(
-                i % self.virtual_width * self.pixel_size,
-                i // self.virtual_width * self.pixel_size,
-                self.pixel_size, self.pixel_size), 1)
+            if (self.pixel_size > 4):
+                pygame.draw.rect(surface, (16, 16, 16), Rect(
+                    i % self.virtual_width * self.pixel_size,
+                    i // self.virtual_width * self.pixel_size,
+                    self.pixel_size, self.pixel_size), 1)
 
 
 class Canvas:
@@ -90,17 +91,31 @@ class Canvas:
         self.clock.tick(60)
         for event in pygame.event.get():
             if event.type == QUIT:
-                pygame.quit()
+                self.close()
                 return False
+            if event.type == KEYDOWN:
+                if (event.unicode == '+'):
+                    pygame.draw.rect(self.screen, (0, 0, 0), Rect(
+                        0, 0, self.fire.width, self.fire.height))
+                    self.fire = Fire(self.fire.width, self.fire.height,
+                                     self.fire.pixel_size + 2)
+                if (event.unicode == '-'):
+                    pygame.draw.rect(self.screen, (0, 0, 0), Rect(
+                        0, 0, self.fire.width, self.fire.height))
+                    self.fire = Fire(self.fire.width, self.fire.height,
+                                     max(self.fire.pixel_size - 2, 2))
 
-        fire.propagate()
-        fire.render(self.screen)
+        self.fire.propagate()
+        self.fire.render(self.screen)
 
         pygame.display.update()
         return True
 
+    def close(self):
+        pygame.quit()
 
-fire = Fire(200, 200, 8)
+
+fire = Fire(800, 400, 8)
 
 pygame.init()
 screen = pygame.display.set_mode((fire.width, fire.height))
