@@ -44,7 +44,7 @@ class Fire:
         (239, 239, 199),
         (255, 255, 255)
     ]
-    max_decay = 2
+    max_decay = 4
 
     def __init__(self, width, height, pixel_size):
         self.width = width
@@ -71,6 +71,10 @@ class Fire:
                 i % self.virtual_width * self.pixel_size,
                 i // self.virtual_width * self.pixel_size,
                 self.pixel_size, self.pixel_size))
+            pygame.draw.rect(surface, (16, 16, 16), Rect(
+                i % self.virtual_width * self.pixel_size,
+                i // self.virtual_width * self.pixel_size,
+                self.pixel_size, self.pixel_size), 1)
 
 
 class Canvas:
@@ -83,7 +87,7 @@ class Canvas:
         super().__init__()
 
     def loop(self):
-        self.clock.tick(30)
+        self.clock.tick(60)
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -96,7 +100,7 @@ class Canvas:
         return True
 
 
-fire = Fire(800, 400, 4)
+fire = Fire(200, 200, 8)
 
 pygame.init()
 screen = pygame.display.set_mode((fire.width, fire.height))
